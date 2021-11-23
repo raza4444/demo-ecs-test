@@ -58,12 +58,12 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: conference
-          image: ${{ steps.login-ecr.outputs.registry }}/conference:${{ github.sha }}
+          image: 666564246037.dkr.ecr.us-east-2.amazonaws.com/conference:latest
 
       - name: Deploy to Amazon ECS service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ${{ steps.render-container.outputs.task-definition }}
+          task-definition: ${{ steps.render-web-container.outputs.task-definition }}
           service: conference
           cluster: conference
           wait-for-service-stability: true
