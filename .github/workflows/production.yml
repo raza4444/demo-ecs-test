@@ -48,11 +48,6 @@ jobs:
           docker build -t conference .
           docker tag conference:latest 666564246037.dkr.ecr.us-east-2.amazonaws.com/conference:latest
           docker push 666564246037.dkr.ecr.us-east-2.amazonaws.com/conference:latest
-          
-      - name: Download task def
-        run: |
-          aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 666564246037.dkr.ecr.us-east-2.amazonaws.com
-          aws ecs describe-task-definition --task-definition conference --query taskDefinition > task-definition.json
 
       - name: Render Amazon ECS task definition for container
         id: render-container
