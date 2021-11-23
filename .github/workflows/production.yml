@@ -25,8 +25,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: AKIAZWMSTHIK5T4JR4PY
-          aws-secret-access-key: 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
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
 
       - name: Login to Amazon ECR
@@ -41,7 +41,7 @@ jobs:
 
       - name: Docker build
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REGISTRY: 666564246037.dkr.ecr.us-east-2.amazonaws.com
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t $ECR_REGISTRY/conference:$IMAGE_TAG .
@@ -57,12 +57,12 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: conference
-          image: ${{ steps.login-ecr.outputs.registry }}/conference:${{ github.sha }}
+          image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy to Amazon ECS service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ${{ steps.render-container.outputs.task-definition }}
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: conference
           cluster: conference
           wait-for-service-stability: true
