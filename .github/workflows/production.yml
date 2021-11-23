@@ -25,9 +25,9 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
+          aws-access-key-id: AKIAZWMSTHIK5T4JR4PY
+          aws-secret-access-key: 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
+          aws-region: us-est-2
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -44,9 +44,8 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 666564246037.dkr.ecr.us-east-2.amazonaws.com
-          docker build -t 666564246037.dkr.ecr.us-east-2.amazonaws.com/conference:latest .
-          docker push 666564246037.dkr.ecr.us-east-2.amazonaws.com/conference:latest  
+          docker build -t $ECR_REGISTRY/conference:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/conference:$IMAGE_TAG
 
       - name: Download task def
         run: |
@@ -58,12 +57,12 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: conference
-          image: 666564246037.dkr.ecr.us-east-2.amazonaws.com/conference:latest
+          image: ${{ steps.login-ecr.outputs.registry }}/conference:${{ github.sha }}
 
       - name: Deploy to Amazon ECS service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ${{ steps.render-web-container.outputs.task-definition }}
+          task-definition: ${{ steps.render-container.outputs.task-definition }}
           service: conference
           cluster: conference
           wait-for-service-stability: true
