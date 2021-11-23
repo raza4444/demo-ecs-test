@@ -44,8 +44,9 @@ jobs:
           ECR_REGISTRY: 666564246037.dkr.ecr.us-east-2.amazonaws.com
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/conference:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/conference:$IMAGE_TAG
+          aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 666564246037.dkr.ecr.us-east-2.amazonaws.com
+          docker build -t 666564246037.dkr.ecr.us-east-2.amazonaws.com/conference:latest .
+          docker push 666564246037.dkr.ecr.us-east-2.amazonaws.com/conference:latest 
 
       - name: Download task def
         run: |
