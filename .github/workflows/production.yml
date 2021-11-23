@@ -48,7 +48,7 @@ jobs:
           docker build -t conference .
           docker tag conference:latest 666564246037.dkr.ecr.us-east-2.amazonaws.com/conference:latest
           docker push 666564246037.dkr.ecr.us-east-2.amazonaws.com/conference:latest
-
+          
       - name: Render Amazon ECS task definition for container
         id: render-container
         uses: aws-actions/amazon-ecs-render-task-definition@v1
